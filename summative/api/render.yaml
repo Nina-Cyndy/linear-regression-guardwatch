@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: guardwatch-api
+    runtime: python
+
+    rootDir: summative/api
+
+    buildCommand: |
+      pip install uv
+      uv sync
+
+    startCommand: |
+      uv run uvicorn main:app --host 0.0.0.0 --port $PORT
