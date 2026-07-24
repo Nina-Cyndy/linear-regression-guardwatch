@@ -9,12 +9,9 @@ class ApiService {
       "https://linear-regression-guardwatch-1.onrender.com";
 
   Future<double> predict(PredictionRequest request) async {
-
     final response = await http.post(
       Uri.parse("$baseUrl/predict"),
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: {"Content-Type": "application/json"},
       body: jsonEncode(request.toJson()),
     );
 
@@ -26,7 +23,6 @@ class ApiService {
       return (data["prediction"] as num).toDouble();
     }
 
-    throw Exception(
-        "Server ${response.statusCode}\n${response.body}");
+    throw Exception("Server ${response.statusCode}\n${response.body}");
   }
 }

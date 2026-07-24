@@ -43,23 +43,11 @@ class _HomeScreenState extends State<HomeScreen> {
   String? gpsTracked;
   String? alternativeTransport;
 
-  final locations = [
-    "urban",
-    "peri_urban",
-    "rural",
-    "remote",
-  ];
+  final locations = ["urban", "peri_urban", "rural", "remote"];
 
-  final times = [
-    "day",
-    "night",
-    "dawn_dusk",
-  ];
+  final times = ["day", "night", "dawn_dusk"];
 
-  final days = [
-    "weekday",
-    "weekend",
-  ];
+  final days = ["weekday", "weekend"];
 
   final callTypes = [
     "medical",
@@ -70,11 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     "other",
   ];
 
-  final priorities = [
-    "p1_emergency",
-    "p2_urgent",
-    "p3_routine",
-  ];
+  final priorities = ["p1_emergency", "p2_urgent", "p3_routine"];
 
   final callerTypes = [
     "patient_family",
@@ -85,10 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
     "other",
   ];
 
-  final yesNo = [
-    "1",
-    "0",
-  ];
+  final yesNo = ["1", "0"];
 
   final qualifications = [
     "driver_only",
@@ -110,7 +91,6 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   Future<void> predictResponseTime() async {
-
     if (location == null ||
         timeOfDay == null ||
         dayOfWeek == null ||
@@ -129,11 +109,8 @@ class _HomeScreenState extends State<HomeScreen> {
         callToDispatchController.text.isEmpty ||
         crewSizeController.text.isEmpty ||
         yearController.text.isEmpty) {
-
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Please complete every field."),
-        ),
+        const SnackBar(content: Text("Please complete every field.")),
       );
 
       return;
@@ -144,7 +121,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
-
       final request = PredictionRequest(
         location: location!,
         timeOfDay: timeOfDay!,
@@ -154,48 +130,31 @@ class _HomeScreenState extends State<HomeScreen> {
         callerType: callerType!,
         nationalNumberUsed: int.parse(nationalNumberUsed!),
         dispatchCenterUsed: int.parse(dispatchCenterUsed!),
-        callToDispatchMin:
-            double.parse(callToDispatchController.text),
-        ambulanceAvailable:
-            int.parse(ambulanceAvailable!),
+        callToDispatchMin: double.parse(callToDispatchController.text),
+        ambulanceAvailable: int.parse(ambulanceAvailable!),
         crewSize: int.parse(crewSizeController.text),
-        highestQualification:
-            highestQualification!,
-        equipmentComplete:
-            int.parse(equipmentComplete!),
-        oxygenAvailable:
-            int.parse(oxygenAvailable!),
-        defibrillatorAvailable:
-            int.parse(defibrillatorAvailable!),
-        gpsTracked:
-            int.parse(gpsTracked!),
-        alternativeTransport:
-            alternativeTransport!,
-        year:
-            int.parse(yearController.text),
+        highestQualification: highestQualification!,
+        equipmentComplete: int.parse(equipmentComplete!),
+        oxygenAvailable: int.parse(oxygenAvailable!),
+        defibrillatorAvailable: int.parse(defibrillatorAvailable!),
+        gpsTracked: int.parse(gpsTracked!),
+        alternativeTransport: alternativeTransport!,
+        year: int.parse(yearController.text),
       );
 
-      final result =
-          await apiService.predict(request);
+      final result = await apiService.predict(request);
 
       setState(() {
         prediction = result.toStringAsFixed(2);
       });
-
     } catch (e) {
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
-      );
-
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
-
       setState(() {
         isLoading = false;
       });
-
     }
   }
 
@@ -214,9 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: PredictionCard(
-                  prediction: prediction,
-                ),
+                child: PredictionCard(prediction: prediction),
               ),
 
               const SizedBox(height: 20),
@@ -225,7 +182,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: "🚨 Incident Information",
                 child: Column(
                   children: [
-
                     CustomDropdown(
                       label: "Location",
                       items: locations,
@@ -312,13 +268,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           dispatchCenterUsed = value;
                         });
                       },
-                    ), 
+                    ),
 
                     CustomNumberField(
                       label: "Call To Dispatch (Minutes)",
                       controller: callToDispatchController,
                     ),
-
                   ],
                 ),
               ),
@@ -327,7 +282,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: "🚑 Ambulance Information",
                 child: Column(
                   children: [
-
                     CustomDropdown(
                       label: "Ambulance Available",
                       items: yesNo,
@@ -398,7 +352,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         });
                       },
                     ),
-
                   ],
                 ),
               ),
@@ -407,7 +360,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: "📋 Additional Information",
                 child: Column(
                   children: [
-
                     CustomDropdown(
                       label: "Alternative Transport",
                       items: transport,
@@ -423,7 +375,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       label: "Year",
                       controller: yearController,
                     ),
-
                   ],
                 ),
               ),
@@ -431,10 +382,10 @@ class _HomeScreenState extends State<HomeScreen> {
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: LoadingButton(
-                        isLoading: isLoading,
-                        text: "Predict Response Time",
-                        onPressed: predictResponseTime,
-                      ),
+                  isLoading: isLoading,
+                  text: "Predict Response Time",
+                  onPressed: predictResponseTime,
+                ),
               ),
             ],
           ),
@@ -446,18 +397,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildHeader() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(
-        24,
-        36,
-        24,
-        36,
-      ),
+      padding: const EdgeInsets.fromLTRB(24, 36, 24, 36),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFF1565C0),
-            Color(0xFF42A5F5),
-          ],
+          colors: [Color(0xFF1565C0), Color(0xFF42A5F5)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -470,11 +413,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       child: const Column(
         children: [
-          Icon(
-            Icons.local_hospital,
-            color: Colors.white,
-            size: 52,
-          ),
+          Icon(Icons.local_hospital, color: Colors.white, size: 52),
 
           SizedBox(height: 12),
 
@@ -504,36 +443,24 @@ class _HomeScreenState extends State<HomeScreen> {
           Text(
             "Estimate ambulance response time using Machine Learning.",
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 15,
-            ),
+            style: TextStyle(color: Colors.white70, fontSize: 15),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSection({
-    required String title,
-    required Widget child,
-  }) {
+  Widget _buildSection({required String title, required Widget child}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 10,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Card(
         elevation: 4,
         shadowColor: AppColors.shadow,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,

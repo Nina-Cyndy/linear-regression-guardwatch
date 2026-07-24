@@ -19,15 +19,9 @@ class CustomNumberField extends StatelessWidget {
         controller: controller,
         keyboardType: TextInputType.number,
 
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(
-            RegExp(r'[0-9.]'),
-          ),
-        ],
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
 
-        decoration: InputDecoration(
-          labelText: label,
-        ),
+        decoration: InputDecoration(labelText: label),
       ),
     );
   }

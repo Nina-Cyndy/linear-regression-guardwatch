@@ -5,10 +5,7 @@ import '../constants/app_colors.dart';
 class PredictionCard extends StatelessWidget {
   final String? prediction;
 
-  const PredictionCard({
-    super.key,
-    required this.prediction,
-  });
+  const PredictionCard({super.key, required this.prediction});
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +30,7 @@ class PredictionCard extends StatelessWidget {
         children: [
           Icon(
             Icons.timer_outlined,
-            color: hasPrediction
-                ? AppColors.success
-                : AppColors.primary,
+            color: hasPrediction ? AppColors.success : AppColors.primary,
             size: 50,
           ),
 
@@ -43,10 +38,7 @@ class PredictionCard extends StatelessWidget {
 
           const Text(
             "Predicted Response Time",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 12),
@@ -66,10 +58,7 @@ class PredictionCard extends StatelessWidget {
                 : const Text(
                     "Waiting for prediction...",
                     key: ValueKey("waiting"),
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: AppColors.subtitle,
-                    ),
+                    style: TextStyle(fontSize: 18, color: AppColors.subtitle),
                   ),
           ),
         ],

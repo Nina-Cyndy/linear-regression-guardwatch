@@ -21,9 +21,7 @@ class GuardWatchApp extends StatelessWidget {
 
         scaffoldBackgroundColor: AppColors.background,
 
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.primary,
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
 
         appBarTheme: const AppBarTheme(
           elevation: 0,
@@ -46,10 +44,7 @@ class GuardWatchApp extends StatelessWidget {
 
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
-            borderSide: BorderSide(
-              color: AppColors.primary,
-              width: 2,
-            ),
+            borderSide: BorderSide(color: AppColors.primary, width: 2),
           ),
 
           contentPadding: const EdgeInsets.symmetric(
