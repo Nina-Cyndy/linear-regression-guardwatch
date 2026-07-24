@@ -1,24 +1,31 @@
+from pathlib import Path
+import subprocess
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from prediction import predict_response_time
+
+from prediction import (
+    predict_response_time,
+    reload_model,
+)
+
 from schemas import PredictionRequest
-import subprocess
-from pathlib import Path
 
 app = FastAPI(
     title="GuardWatch Emergency Response Prediction API",
-    description=(
-        "Predict emergency response times using "
-        "a trained Random Forest regression model."
-    ),
+    description="Predict emergency response time using Machine Learning.",
     version="1.0.0",
 )
+
+# ---------------------------------------------------
+# CORS
+# ---------------------------------------------------
 
 origins = [
     "http://localhost",
     "http://localhost:3000",
-    "http://localhost:8080",
     "http://localhost:5000",
+    "http://localhost:8080",
 ]
 
 app.add_middleware(
@@ -29,6 +36,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ---------------------------------------------------
+# Routes
+# ---------------------------------------------------
 
 @app.get("/")
 def root():
@@ -57,35 +67,43 @@ def predict(request: PredictionRequest):
             "status": "success",
             "model": "Random Forest Regressor",
             "prediction": round(prediction, 2),
-            "unit": "minutes"
+            "unit": "minutes",
         }
 
     except Exception as e:
 
         raise HTTPException(
             status_code=500,
-            detail=str(e)
+            detail=str(e),
         )
 
+
 @app.post("/retrain")
-def retrain_model():
-    """
-    Retrain the machine learning model.
-    """
+def retrain():
 
     try:
-        train_script = Path(__file__).parent / "train.py"
+
+        train_script = (
+            Path(__file__).parent
+            / "train.py"
+        )
 
         result = subprocess.run(
-            ["python", str(train_script)],
+            [
+                "python",
+                str(train_script),
+            ],
             capture_output=True,
             text=True,
             check=True,
         )
 
+        reload_model()
+
         return {
             "status": "success",
             "message": "Model retrained successfully.",
+            "model_reloaded": True,
             "output": result.stdout,
         }
 

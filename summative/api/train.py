@@ -1,7 +1,7 @@
+from pathlib import Path
+
 import joblib
 import pandas as pd
-
-from pathlib import Path
 
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestRegressor
@@ -9,126 +9,118 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-print("Loading dataset...")
 
-# ---------------------------------------------------
-# Paths
-# ---------------------------------------------------
+def train_model():
 
-BASE_DIR = Path(__file__).resolve().parent
-PROJECT_DIR = BASE_DIR.parent
+    print("Loading dataset...")
 
-DATA_PATH = (
-    PROJECT_DIR
-    / "linear_regression"
-    / "data"
-    / "ambulance_established_ems.csv"
-)
+    BASE_DIR = Path(__file__).resolve().parent
+    PROJECT_DIR = BASE_DIR.parent
 
-MODEL_DIR = (
-    PROJECT_DIR
-    / "linear_regression"
-    / "model"
-)
+    DATA_PATH = (
+        PROJECT_DIR
+        / "linear_regression"
+        / "data"
+        / "ambulance_established_ems.csv"
+    )
 
-MODEL_DIR.mkdir(parents=True, exist_ok=True)
+    MODEL_DIR = (
+        PROJECT_DIR
+        / "linear_regression"
+        / "model"
+    )
 
-MODEL_PATH = MODEL_DIR / "guardwatch_response_model.pkl"
+    MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
-# ---------------------------------------------------
-# Load Dataset
-# ---------------------------------------------------
+    MODEL_PATH = (
+        MODEL_DIR
+        / "guardwatch_response_model.pkl"
+    )
 
-df = pd.read_csv(DATA_PATH)
+    # ---------------------------------------------------
 
-print(f"Dataset loaded successfully ({df.shape[0]} rows).")
+    df = pd.read_csv(DATA_PATH)
 
-# ---------------------------------------------------
-# Feature Engineering
-# ---------------------------------------------------
+    print(f"Dataset loaded ({len(df)} rows).")
 
-target = "response_time_min"
+    target = "response_time_min"
 
-columns_to_drop = [
-    "id",
-    target,
-    "total_call_time_min",
-    "transport_time_min",
-    "on_scene_time_min",
-    "met_target_response",
-    "cfr_responded",
-    "cfr_first_aid_given",
-    "patient_reached_facility",
-    "handover_to_facility",
-    "documentation_complete",
-]
-
-X = df.drop(columns=columns_to_drop)
-y = df[target]
-
-categorical_features = X.select_dtypes(include=["object"]).columns.tolist()
-numerical_features = X.select_dtypes(exclude=["object"]).columns.tolist()
-
-print(f"Categorical features: {len(categorical_features)}")
-print(f"Numerical features: {len(numerical_features)}")
-
-# ---------------------------------------------------
-# Preprocessing
-# ---------------------------------------------------
-
-preprocessor = ColumnTransformer(
-    transformers=[
-        (
-            "num",
-            StandardScaler(),
-            numerical_features,
-        ),
-        (
-            "cat",
-            OneHotEncoder(handle_unknown="ignore"),
-            categorical_features,
-        ),
+    columns_to_drop = [
+        "id",
+        target,
+        "total_call_time_min",
+        "transport_time_min",
+        "on_scene_time_min",
+        "met_target_response",
+        "cfr_responded",
+        "cfr_first_aid_given",
+        "patient_reached_facility",
+        "handover_to_facility",
+        "documentation_complete",
     ]
-)
 
-# ---------------------------------------------------
-# Split Data
-# ---------------------------------------------------
+    X = df.drop(columns=columns_to_drop)
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X,
-    y,
-    test_size=0.20,
-    random_state=42,
-)
+    y = df[target]
 
-# ---------------------------------------------------
-# Best Model (Random Forest)
-# ---------------------------------------------------
+    categorical_features = X.select_dtypes(include=["object"]).columns.tolist()
 
-model = Pipeline(
-    steps=[
-        ("preprocessor", preprocessor),
-        (
-            "model",
-            RandomForestRegressor(
-                n_estimators=200,
-                random_state=42,
+    numerical_features = X.select_dtypes(exclude=["object"]).columns.tolist()
+
+    preprocessor = ColumnTransformer(
+        transformers=[
+            (
+                "num",
+                StandardScaler(),
+                numerical_features,
             ),
-        ),
-    ]
-)
+            (
+                "cat",
+                OneHotEncoder(handle_unknown="ignore"),
+                categorical_features,
+            ),
+        ]
+    )
 
-print("Training Random Forest model...")
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size=0.20,
+        random_state=42,
+    )
 
-model.fit(X_train, y_train)
+    pipeline = Pipeline(
+        steps=[
+            (
+                "preprocessor",
+                preprocessor,
+            ),
+            (
+                "model",
+                RandomForestRegressor(
+                    n_estimators=200,
+                    random_state=42,
+                ),
+            ),
+        ]
+    )
 
-print("Training complete.")
+    print("Training model...")
 
-# ---------------------------------------------------
-# Save Model
-# ---------------------------------------------------
+    pipeline.fit(
+        X_train,
+        y_train,
+    )
 
-joblib.dump(model, MODEL_PATH)
+    joblib.dump(
+        pipeline,
+        MODEL_PATH,
+    )
 
-print(f"Model saved successfully to:\n{MODEL_PATH}")
+    print("Model saved successfully.")
+
+    return MODEL_PATH
+
+
+if __name__ == "__main__":
+    train_model()
